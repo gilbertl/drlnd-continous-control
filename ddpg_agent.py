@@ -16,7 +16,8 @@ class Agent():
     
     def __init__(self, state_size, action_size, random_seed, buffer_size=int(1e5), 
                  batch_size=128, gamma=0.99, tau=1e-3, lr_actor=1e-4, lr_critic=1e-3, 
-                 weight_decay=0):
+                 weight_decay=0, actor_fc1_units=400, actor_fc2_units=300,
+                 critic_fc1_units=400, critic_fc2_units=300):
         """Initialize an Agent object.
         
         Params
@@ -37,13 +38,17 @@ class Agent():
         self.weight_decay = weight_decay
 
         # Actor Network (w/ Target Network)
-        self.actor_local = Actor(state_size, action_size, random_seed).to(device)
-        self.actor_target = Actor(state_size, action_size, random_seed).to(device)
+        self.actor_local = Actor(state_size, action_size, random_seed, 
+                                 fc1_units=actor_fc1_units, fc2_units=actor_fc2_units).to(device)
+        self.actor_target = Actor(state_size, action_size, random_seed, 
+                                 fc1_units=actor_fc1_units, fc2_units=actor_fc2_units).to(device)
         self.actor_optimizer = optim.Adam(self.actor_local.parameters(), lr=self.lr_actor)
 
         # Critic Network (w/ Target Network)
-        self.critic_local = Critic(state_size, action_size, random_seed).to(device)
-        self.critic_target = Critic(state_size, action_size, random_seed).to(device)
+        self.critic_local = Critic(state_size, action_size, random_seed, 
+                                 fcs1_units=critic_fc1_units, fc2_units=critic_fc2_units).to(device)
+        self.critic_target = Critic(state_size, action_size, random_seed, 
+                                 fcs1_units=critic_fc1_units, fc2_units=critic_fc2_units).to(device)
         self.critic_optimizer = optim.Adam(self.critic_local.parameters(), lr=self.lr_critic, weight_decay=self.weight_decay)
 
         # Noise process
